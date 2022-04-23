@@ -1,0 +1,19 @@
+{
+  "name": "homework-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "data.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^3.6.7",
+    "apollo-server-core": "^3.6.7",
+    "graphql": "^16.3.0",
+    "nodemon": "^2.0.15"
+  }
+}
