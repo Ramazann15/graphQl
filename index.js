@@ -5,6 +5,9 @@ const {
 const { nanoid } = require('nanoid');
 
 const Data = require('./data');
+const {createUser,createEvent,createParticipant,createLocation}= require("./Mutation/createMutation");
+const {updateUser,updateEvent,updateLocation,updateParticipant} = require("./Mutation/UpdateMutation")
+const {deleteUser,deleteAllUser,deleteEvent, deleteAllEvent,deleteLocation, deleteAllLocation,deleteParticipant,deleteAllParticipant} = require("./Mutation/deleteMutation")
 
 const typeDefs = gql`
   type User {
@@ -196,196 +199,49 @@ const resolvers = {
 
   Mutation: {
     // CREATE
+    
     //user
-    createUser: (parent, { data }) => {
-      const user = {
-        //otomatik id tanımlıyor
-        id: nanoid(),
-        ...data,
-      };
-      //Data usera eklendi
-      Data.users.push(user);
-      return user;
-    },
+    createUser:createUser,
 
     //event
-    createEvent: (parent, { data }) => {
-      const event = {
-        id: nanoid(),
-        ...data,
-      };
-
-      Data.events.push(event);
-      return event;
-    },
+    createEvent: createEvent,
 
     //Location
-    createLocation: (parent, { data }) => {
-      const location = {
-        id: nanoid(),
-        ...data,
-      };
+    createLocation:createLocation,
 
-      Data.locations.push(location);
-      return location;
-    },
     //Participant
-    createParticipant:(parent, { data }) => {
-      const participant = {
-        id: nanoid(),
-        ...data,
-      };
-
-      Data.participants.push(participant);
-      return participant;
-    },
+    createParticipant:createParticipant,
 
     //UPDATE
+
     //user
-    updateUser: (parent, { data, id }) => {
-      //kaçıncı indexte olunduguna bakıldı
-      const user_index = Data.users.findIndex((user) => user.id == id);
-
-      if (user_index == -1) {
-        throw new Error('404 User Not Found');
-      }
-
-      const updated_users = (Data.users[user_index] = {
-        ...Data.users[user_index],
-        ...data,
-      });
-      return updated_users;
-    },
-
+    updateUser: updateUser,
 
     //Event
-    updateEvent: (parent, { data, id }) => {
-      const event_index = Data.events.findIndex((event) => event.id == id);
-
-      if (event_index == -1) {
-        throw new Error('404 Event Not Found');
-      }
-
-      const updated_event = (Data.events[event_index] = {
-        ...Data.events[event_index],
-        ...data,
-      });
-      return updated_event;
-    },
+    updateEvent: updateEvent,
 
     //Location
-    updateLocation: (parent, { data, id }) => {
-      const location_index = Data.locations.findIndex((locations) => locations.id == id);
-
-      if (location_index == -1) {
-        throw new Error('404 locations Not Found');
-      }
-
-      const updated_location = (Data.locations[location_index] = {
-        ...Data.locations[location_index],
-        ...data,
-      });
-      return updated_location;
-    },
+    updateLocation: updateLocation,
 
     //Participant 
-    updateParticipant: (parent, { data, id }) => {
-      const Participant_index = Data.participants.findIndex((participants) => participants.id == id);
-
-      if (Participant_index == -1) {
-        throw new Error('404 participants Not Found');
-      }
-
-      const updated_Participant  = (Data.participants[Participant_index] = {
-        ...Data.participants[Participant_index],
-        ...data,
-      });
-      return updated_Participant;
-    },
+    updateParticipant: updateParticipant,
 
     //DELETE
     //user
-    deleteUser: (parent, { id }) => {
-      const user_index = Data.users.findIndex((user) => user.id == id);
-
-      if (user_index == -1) {
-        throw new Error('404 User Not Found');
-      }
-
-      const deleted_user = Data.users[user_index];
-      Data.users.splice(user_index, 1);
-      return deleted_user;
-    },
-    deleteAllUser: () => {
-      const length = Data.users.length;
-      Data.users = [];
-      return {
-        count: length,
-      };
-    },
+    deleteUser: deleteUser,
+    deleteAllUser: deleteAllUser,
 
     //event
-    deleteEvent: (parent, { id }) => {
-      const event_index = Data.events.findIndex((events) => events.id == id);
-
-      if (event_index == -1) {
-        throw new Error('404 Event Not Found');
-      }
-
-      const deleted_event = Data.events[event_index];
-      Data.users.splice(event_index, 1);
-      return deleted_event;
-    },
-
-    deleteAllEvent: () => {
-      const length = Data.events.length;
-      Data.events.splice(0, length);
-
-      return {
-        count: length,
-      };
-    },
+    deleteEvent: deleteEvent,
+    deleteAllEvent:deleteAllEvent,
 
     //Location
-    deleteLocation: (parent, { id }) => {
-      const location_index = Data.locations.findIndex((locations) => locations.id == id);
-
-      if (location_index == -1) {
-        throw new Error('404 locations Not Found');
-      }
-
-      const deleted_locations = Data.locations[location_index];
-      Data.locations.splice(location_index, 1);
-      return deleted_locations;
-    },
-
-    deleteAllLocation: () => {
-      const length = Data.locations.length;
-      Data.locations = [];
-      return {
-        count: length,
-      };
-    },
+    deleteLocation: deleteLocation,
+    deleteAllLocation:deleteAllLocation,
 
     //Participant
-    deleteParticipant: (parent, { id }) => {
-      const Participant_index = Data.participants.findIndex((participants) => participants.id == id);
-
-      if (Participant_index == -1) {
-        throw new Error('404 participants Not Found');
-      }
-
-      const deleted_Participant = Data.participants[Participant_index];
-      Data.participants.splice(Participant_index, 1);
-      return deleted_Participant;
-    },
-    deleteAllParticipant: () => {
-      const length = Data.participants.length;
-      Data.participants = [];
-      return {
-        count: length,
-      };
-    },
+    deleteParticipant: deleteParticipant,
+    deleteAllParticipant: deleteAllParticipant
   },
 };
 
