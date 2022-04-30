@@ -1,15 +1,14 @@
-const { ApolloServer, gql } = require('apollo-server');
-const {
-  ApolloServerPluginLandingPageGraphQLPlayground,
-} = require('apollo-server-core');
+const { createServer , createPubSub  } = require('graphql-yoga');
+const {withFilter} = require("graphql-subscriptions")
 const { nanoid } = require('nanoid');
 
 const Data = require('./data');
 const {createUser,createEvent,createParticipant,createLocation}= require("./Mutation/createMutation");
 const {updateUser,updateEvent,updateLocation,updateParticipant} = require("./Mutation/UpdateMutation")
 const {deleteUser,deleteAllUser,deleteEvent, deleteAllEvent,deleteLocation, deleteAllLocation,deleteParticipant,deleteAllParticipant} = require("./Mutation/deleteMutation")
+const pubSub = require("./pubSub")
 
-const typeDefs = gql`
+const typeDefs = `
   type User {
     id: ID!
     username: String!
@@ -156,9 +155,19 @@ const typeDefs = gql`
     deleteParticipant(id: ID!): Participant!
     deleteAllParticipant: DeleteAllOutput!
   }
+
+  #Subscription 
+
+  type Subscription {
+    userCreated:User!
+    eventCreated:Event!
+    participantAdded:Participant!
+  }
+
 `;
 
 const resolvers = {
+
   Query: {
     //User
     users: () => Data.users,
@@ -177,6 +186,17 @@ const resolvers = {
     participants: () => Data.participants,
     participant: (parent, args) =>
       Data.participants.find((participant) => participant.id == args.id),
+  },
+  Subscription:{
+    userCreated:{
+      subscribe:()=>pubSub.asyncIterator("userCreated")
+    },
+    eventCreated:{
+      subscribe:()=>pubSub.asyncIterator("eventCreated")
+    },
+    participantAdded:{
+      subscribe:()=>pubSub.asyncIterator("participantAdded")
+    }
   },
   Event: {
     user: (parent, args) =>
@@ -245,16 +265,9 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  plugins: [
-    ApolloServerPluginLandingPageGraphQLPlayground({
-      // options
-    }),
-  ],
-});
 
-server.listen().then(({ url }) => {
-  console.log('🚀 Server started on ' + url);
-});
+const server = createServer({
+  schema:{ typeDefs, resolvers , context:{pubSub} },
+})
+
+server.start()

@@ -1,5 +1,6 @@
 const { nanoid } = require('nanoid');
 const Data = require('../data');
+const pubSub = require("../pubSub")
 
 const createUser = (parent, { data }) => {
     const user = {
@@ -9,6 +10,7 @@ const createUser = (parent, { data }) => {
     };
     //Data usera eklendi
     Data.users.push(user);
+    pubSub.publish("userCreated",{userCreated:user})
     return user;
 }
 
@@ -20,6 +22,7 @@ const createEvent = (parent, { data }) => {
     };
 
     Data.events.push(event);
+    pubSub.publish("eventCreated",{eventCreated:event})
     return event;
 }
 
@@ -41,6 +44,7 @@ const  createParticipant = (parent, { data }) => {
     };
 
     Data.participants.push(participant);
+    pubSub.publish("participantAdded",{participantAdded:participant})
     return participant;
 }
 
